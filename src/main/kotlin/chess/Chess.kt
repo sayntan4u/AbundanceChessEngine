@@ -4,7 +4,8 @@ import chess.helper.*
 
 class ChessEngine {
 
-    var board = mutableListOf<Square>()
+    val board = mutableListOf<Square>()
+    val occupiedSquares = OccupiedSquare()
 
     var side = Player.WHITE
 
@@ -20,6 +21,7 @@ class ChessEngine {
                             8 -> {
                                 sqr.piece = Piece()
                                 sqr.piece?.clan = Clan.BLACK
+                                occupiedSquares.blackOccupiedSquares.add(sqr.pos.toString())
                                 when(col){
                                     'a','h' -> {
                                         sqr.piece?.pieceType = PieceType.R}
@@ -38,16 +40,27 @@ class ChessEngine {
                             7 -> {
                                 sqr.piece = Piece()
                                 sqr.piece?.clan = Clan.BLACK
+                                occupiedSquares.blackOccupiedSquares.add(sqr.pos.toString())
                                 sqr.piece?.pieceType = PieceType.P
+                            }
+                            5 -> {
+                                if(col == 'e'){
+                                    sqr.piece = Piece()
+                                    sqr.piece?.clan = Clan.WHITE
+                                    occupiedSquares.blackOccupiedSquares.add(sqr.pos.toString())
+                                    sqr.piece?.pieceType = PieceType.B
+                                }
                             }
                             2 -> {
                                 sqr.piece = Piece()
                                 sqr.piece?.clan = Clan.WHITE
+                                occupiedSquares.whiteOccupiedSquares.add(sqr.pos.toString())
                                 sqr.piece?.pieceType = PieceType.P
                             }
                             1 -> {
                                 sqr.piece = Piece()
                                 sqr.piece?.clan = Clan.WHITE
+                                occupiedSquares.whiteOccupiedSquares.add(sqr.pos.toString())
                                 when(col){
                                     'a','h' -> {
                                         sqr.piece?.pieceType = PieceType.R}
@@ -152,12 +165,243 @@ class ChessEngine {
         }
 
         println("___________________")
+
+        println(occupiedSquares.whiteOccupiedSquares)
+        println(occupiedSquares.blackOccupiedSquares)
     }
+
+    fun getPieceAt(pos:String) : Piece{
+        val piece = Piece()
+        for(sqr in board){
+           if(sqr.pos == pos){
+               piece.pieceType = sqr.piece?.pieceType
+               piece.clan = sqr.piece?.clan
+           }
+        }
+        return piece
+    }
+
+    fun getRow(pos: String) : Int{
+        return pos[1].toString().toInt()
+    }
+
+    fun getCol(pos: String) : Char{
+        return pos[0].toChar()
+    }
+
 
     fun availableMoves(pos : String) : List<String>{
         var moves = mutableListOf<String>()
+        var move = ""
+
+        val piece = getPieceAt(pos)
+        val row = getRow(pos)
+        val col = getCol(pos)
+
+        println(piece.pieceType)
+//        println(col)
+//        println(row)
 
 
+        when(piece.pieceType){
+            PieceType.P -> {}
+            PieceType.R -> {}
+            PieceType.N -> {
+                //left
+                if(col > 'b') {
+                    if (row < 8) {
+                        move = "${col - 2}${row + 1}"
+                        moves.add(move)
+                    }
+                    if (row > 1) {
+                        move = "${col - 2}${row - 1}"
+                        moves.add(move)
+                    }
+                }
+
+                //right
+                if(col < 'g') {
+                    if ((row + 1) < 9) {
+                        move = "${col + 2}${row + 1}"
+                        moves.add(move)
+                    }
+                    if ((row - 1) > 0) {
+                        move = "${col + 2}${row - 1}"
+                        moves.add(move)
+                    }
+                }
+
+                //Up
+                if(row < 7){
+                    if(col>'a'){
+                        move = "${col - 1}${row + 2}"
+                        moves.add(move)
+                    }
+                    if(col<'h'){
+                        move = "${col + 1}${row + 2}"
+                        moves.add(move)
+                    }
+                }
+
+                //Down
+                if(row > 2){
+                    if(col>'a'){
+                        move = "${col - 1}${row - 2}"
+                        moves.add(move)
+                    }
+                    if(col<'h'){
+                        move = "${col + 1}${row - 2}"
+                        moves.add(move)
+                    }
+                }
+            }
+            PieceType.B -> {
+
+                //top left move
+                var i = col
+                var j = row
+                while(i > 'a'){
+                    i--
+                    j++
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //top right move
+                i = col
+                j = row
+                while(i < 'h'){
+                    i++
+                    j++
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //bottom right move
+                i = col
+                j = row
+                while(j > 1){
+                    i++
+                    j--
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                }
+
+                //bottom left move
+                i = col
+                j = row
+                while(j > 1){
+                    i--
+                    j--
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                }
+            }
+            PieceType.K -> {}
+            PieceType.Q -> {}
+            null -> TODO()
+        }
+
+        //remove moves if occupied by same clan
+//        for(sqr in board){
+//            if(sqr.piece != null && sqr.piece?.clan == piece.clan && sqr.pos in moves){
+//                moves.remove(sqr.pos)
+//            }
+//        }
 
         return moves.toList()
     }

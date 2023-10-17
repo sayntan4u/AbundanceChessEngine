@@ -26,15 +26,22 @@ class Square(p : Piece? = null, row : Int? = null, col : Char? = null){
     var piece : Piece?
     var row : Int?
     var col: Char?
+    var pos : String?
 
     init {
         piece = p
         this.row = row
         this.col = col
+        pos = col.toString() + row.toString()
     }
 }
 
 class AttackedSquare(){
     var byWhiteAttackedSquares = mutableListOf<String>()
     var byBlackAttackedSquares = mutableListOf<String>()
+}
+
+class OccupiedSquare{
+    var whiteOccupiedSquares = mutableListOf<String>()
+    var blackOccupiedSquares = mutableListOf<String>()
 }

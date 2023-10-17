@@ -8,4 +8,7 @@ fun main() {
     chess.setup()
     chess.printBoard()
 
+    var list = chess.availableMoves("e5")
+    println(list)
+
 }
