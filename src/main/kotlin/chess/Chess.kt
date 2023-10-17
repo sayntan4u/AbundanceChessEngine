@@ -43,14 +43,16 @@ class ChessEngine {
                                 occupiedSquares.blackOccupiedSquares.add(sqr.pos.toString())
                                 sqr.piece?.pieceType = PieceType.P
                             }
+                            //Test Starts
                             5 -> {
                                 if(col == 'e'){
                                     sqr.piece = Piece()
-                                    sqr.piece?.clan = Clan.WHITE
+                                    sqr.piece?.clan = Clan.BLACK
                                     occupiedSquares.blackOccupiedSquares.add(sqr.pos.toString())
-                                    sqr.piece?.pieceType = PieceType.B
+                                    sqr.piece?.pieceType = PieceType.Q
                                 }
                             }
+                            //Test ends
                             2 -> {
                                 sqr.piece = Piece()
                                 sqr.piece?.clan = Clan.WHITE
@@ -166,8 +168,8 @@ class ChessEngine {
 
         println("___________________")
 
-        println(occupiedSquares.whiteOccupiedSquares)
-        println(occupiedSquares.blackOccupiedSquares)
+//        println(occupiedSquares.whiteOccupiedSquares)
+//        println(occupiedSquares.blackOccupiedSquares)
     }
 
     fun getPieceAt(pos:String) : Piece{
@@ -204,8 +206,301 @@ class ChessEngine {
 
 
         when(piece.pieceType){
-            PieceType.P -> {}
-            PieceType.R -> {}
+            PieceType.P -> {
+                if(piece.clan == Clan.WHITE) {
+
+                    //straight move
+                    if (row == 2) {
+                        move = "${col}${(row + 1)}"
+
+                        var emptySquare = true
+                        for (sqr in board){
+                            if(sqr.pos == move && sqr.piece != null){
+                                emptySquare = false
+                                break
+                            }
+                        }
+                        if(emptySquare){
+                            moves.add(move)
+                            move = "${col}${(row + 2)}"
+
+                            emptySquare = true
+                            for (sqr in board){
+                                if(sqr.pos == move && sqr.piece != null){
+                                    emptySquare = false
+                                    break
+                                }
+                            }
+                            if(emptySquare){
+                                moves.add(move)
+                            }
+                        }
+
+
+                    }
+                    else {
+                        move = "${col}${(row) + 1}"
+
+                        var emptySquare = true
+                        for (sqr in board){
+                            if(sqr.pos == move && sqr.piece != null){
+                                emptySquare = false
+                                break
+                            }
+                        }
+                        if(emptySquare){
+                            moves.add(move)
+                        }
+                    }
+
+                    //diagonal left check
+                    if(col > 'a'){
+                        move = "${col - 1}${(row + 1)}"
+
+                        var enemySquare = false
+                        for (sqr in board){
+
+                            if(sqr.pos == move && sqr.piece!= null && sqr.piece?.clan == Clan.BLACK){
+                                enemySquare = true
+                                break
+                            }
+                        }
+                        if(enemySquare){
+                            moves.add(move)
+                        }
+                    }
+
+                    //diagonal right check
+                    if(col < 'h'){
+                        move = "${col + 1}${(row + 1)}"
+
+
+
+                        var enemySquare = false
+                        for (sqr in board){
+
+                            if(sqr.pos == move && sqr.piece!= null && sqr.piece?.clan == Clan.BLACK){
+                                enemySquare = true
+                                break
+                            }
+                        }
+                        if(enemySquare){
+                            moves.add(move)
+                        }
+                    }
+
+
+                }
+
+                if(piece.clan == Clan.BLACK) {
+                    if (row == 7) {
+                        move = "${col}${(row - 1)}"
+
+                        var emptySquare = true
+                        for (sqr in board){
+                            if(sqr.pos == move && sqr.piece != null){
+                                emptySquare = false
+                                break
+                            }
+                        }
+                        if(emptySquare){
+                            moves.add(move)
+                            move = "${col}${(row - 2)}"
+
+                            emptySquare = true
+                            for (sqr in board){
+                                if(sqr.pos == move && sqr.piece != null){
+                                    emptySquare = false
+                                    break
+                                }
+                            }
+                            if(emptySquare){
+                                moves.add(move)
+                            }
+
+
+                        }
+                    }
+                    else {
+                        move = "${col}${(row) - 1}"
+
+                        var emptySquare = true
+                        for (sqr in board){
+                            if(sqr.pos == move && sqr.piece != null){
+                                emptySquare = false
+                                break
+                            }
+                        }
+                        if(emptySquare){
+                            moves.add(move)
+                        }
+                    }
+
+                    //diagonal left check
+                    if(col > 'a'){
+                        move = "${col - 1}${(row - 1)}"
+
+                        var enemySquare = false
+                        for (sqr in board){
+
+                            if(sqr.pos == move && sqr.piece!= null && sqr.piece?.clan == Clan.WHITE){
+                                enemySquare = true
+                                break
+                            }
+                        }
+                        if(enemySquare){
+                            moves.add(move)
+                        }
+                    }
+
+                    //diagonal right check
+                    if(col < 'h'){
+                        move = "${col + 1}${(row - 1)}"
+
+                        var enemySquare = false
+                        for (sqr in board){
+
+                            if(sqr.pos == move && sqr.piece!= null && sqr.piece?.clan == Clan.WHITE){
+                                enemySquare = true
+                                break
+                            }
+                        }
+                        if(enemySquare){
+                            moves.add(move)
+                        }
+                    }
+                }
+            }
+            PieceType.R -> {
+                var i = col
+
+                //left move
+                while(i > 'a'){
+                    i--
+                    move = "${i}${row}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+
+                }
+
+                i=col
+                //right move
+                while(i < 'h'){
+                    i++
+                    move = "${i}${row}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //up move
+                var j=row
+                while(j < 8){
+                    j++
+                    move = "${col}${(j)}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //down move
+                j=row
+                while(j>1){
+                    j--
+                    move = "${col}${(j)}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                }
+            }
             PieceType.N -> {
                 //left
                 if(col > 'b') {
@@ -392,16 +687,281 @@ class ChessEngine {
                 }
             }
             PieceType.K -> {}
-            PieceType.Q -> {}
+            PieceType.Q -> {
+                var i = col
+
+                //left move
+                while(i > 'a'){
+                    i--
+                    move = "${i}${row}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+
+                }
+
+                i=col
+                //right move
+                while(i < 'h'){
+                    i++
+                    move = "${i}${row}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //up move
+                var j=row
+                while(j < 8){
+                    j++
+                    move = "${col}${(j)}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //down move
+                j=row
+                while(j>1){
+                    j--
+                    move = "${col}${(j)}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                }
+
+                //top left move
+                 i = col
+                 j = row
+                while(i > 'a'){
+                    i--
+                    j++
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //top right move
+                i = col
+                j = row
+                while(i < 'h'){
+                    i++
+                    j++
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+
+                }
+
+                //bottom right move
+                i = col
+                j = row
+                while(j > 1){
+                    i++
+                    j--
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                }
+
+                //bottom left move
+                i = col
+                j = row
+                while(j > 1){
+                    i--
+                    j--
+                    move = "${i}${j}"
+                    if(piece.clan == Clan.WHITE){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                    if(piece.clan == Clan.BLACK){
+                        if(move in occupiedSquares.whiteOccupiedSquares){
+                            moves.add(move)
+                            break
+                        }
+                        else if(move in occupiedSquares.blackOccupiedSquares){
+                            break
+                        }
+                        else{
+                            moves.add(move)
+                        }
+                    }
+                }
+
+
+            }
             null -> TODO()
         }
 
         //remove moves if occupied by same clan
-//        for(sqr in board){
-//            if(sqr.piece != null && sqr.piece?.clan == piece.clan && sqr.pos in moves){
-//                moves.remove(sqr.pos)
-//            }
-//        }
+        for(sqr in board){
+            if(sqr.piece != null && sqr.piece?.clan == piece.clan && sqr.pos in moves){
+                moves.remove(sqr.pos)
+            }
+        }
 
         return moves.toList()
     }
