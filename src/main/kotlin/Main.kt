@@ -6,6 +6,6 @@ fun main() {
     val chess = ChessEngine()
 
     chess.setup()
-    chess.printBoard(Player.BLACK)
+    chess.printBoard()
 
 }

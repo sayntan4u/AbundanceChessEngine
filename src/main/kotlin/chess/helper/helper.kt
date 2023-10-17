@@ -1,6 +1,6 @@
 package chess.helper
 
-enum class Piece {
+enum class PieceType {
     R, N, B, Q, K, P
 }
 
@@ -12,15 +12,23 @@ enum class Player{
     WHITE, BLACK
 }
 
-class Square(p : Piece? = null, c : Clan? = null, row : Int? = null, col : Char? = null){
-    var piece : Piece?
+class Piece(pieceType : PieceType? = null, clan: Clan? = null){
+    var pieceType : PieceType?
     var clan : Clan?
+
+    init {
+        this.pieceType = pieceType
+        this.clan = clan
+    }
+}
+
+class Square(p : Piece? = null, row : Int? = null, col : Char? = null){
+    var piece : Piece?
     var row : Int?
     var col: Char?
 
     init {
         piece = p
-        clan = c
         this.row = row
         this.col = col
     }
