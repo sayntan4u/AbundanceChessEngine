@@ -8,11 +8,7 @@ fun main() {
     chess.setup()
 
     chess.movePiece("e2", "e4")
-    chess.movePiece("e7", "e5")
-    chess.movePiece("e5", "e4")
+    chess.movePiece("d7", "d5")
 
-
-//    val list = chess.availableMoves("e5")
-//    println(list)
 
 }

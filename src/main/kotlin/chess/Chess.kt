@@ -6,6 +6,7 @@ class ChessEngine {
 
     val board = mutableListOf<Square>()
     val occupiedSquares = OccupiedSquare()
+    val attackedSquare = AttackedSquare()
 
     var side = Player.WHITE
 
@@ -82,10 +83,11 @@ class ChessEngine {
                     }
                 }
 
-        printBoard()
+                updateAttackedSquare()
+                printBoard()
     }
 
-    fun printBoard(side : Player = Player.WHITE){
+    private fun printBoard(side : Player = Player.WHITE){
         println("_______BOARD_______")
         if(side == Player.WHITE){
             var i = 1
@@ -172,9 +174,14 @@ class ChessEngine {
 
         println("white occupied: " + occupiedSquares.whiteOccupiedSquares)
         println("black occupied: " + occupiedSquares.blackOccupiedSquares)
+
+        println("___________________")
+
+        println("white attacked: " + attackedSquare.byWhiteAttackedSquares)
+        println("black attacked: " + attackedSquare.byBlackAttackedSquares)
     }
 
-    fun getPieceAt(pos:String) : Piece{
+    private fun getPieceAt(pos:String) : Piece{
         val piece = Piece()
         for(sqr in board){
            if(sqr.pos == pos){
@@ -185,27 +192,24 @@ class ChessEngine {
         return piece
     }
 
-    fun getRow(pos: String) : Int{
+    private fun getRow(pos: String) : Int{
         return pos[1].toString().toInt()
     }
 
-    fun getCol(pos: String) : Char{
+    private fun getCol(pos: String) : Char{
         return pos[0].toChar()
     }
 
 
-    fun availableMoves(pos : String) : List<String>{
-        var moves = mutableListOf<String>()
+    fun getAvailableMoves(pos : String) : List<String>{
+        val moves = mutableListOf<String>()
         var move = ""
 
         val piece = getPieceAt(pos)
         val row = getRow(pos)
         val col = getCol(pos)
 
-        println(piece.pieceType)
-//        println(col)
-//        println(row)
-
+        //println(piece.pieceType)
 
         when(piece.pieceType){
             PieceType.P -> {
@@ -968,6 +972,35 @@ class ChessEngine {
         return moves.toList()
     }
 
+    fun getAttackedSquares(pos : String) : List<String>{
+        val moves = mutableListOf<String>()
+
+        val piece = getPieceAt(pos)
+
+        //println(piece.pieceType)
+
+        val availableMoves = getAvailableMoves(pos)
+
+        if(piece.clan == Clan.WHITE){
+            for(move in availableMoves){
+                if(move in occupiedSquares.blackOccupiedSquares){
+                    moves.add(move)
+                }
+            }
+        }
+        else{
+            for(move in availableMoves){
+                if(move in occupiedSquares.whiteOccupiedSquares){
+                    moves.add(move)
+                }
+            }
+        }
+
+
+
+        return moves.toList()
+    }
+
     fun movePiece(from : String, to : String){
         val fromPiece = getPieceAt(from)
         val toPiece = getPieceAt(to)
@@ -1014,8 +1047,30 @@ class ChessEngine {
             }
         }
 
+        updateAttackedSquare()
         printBoard()
 
+    }
+
+    private fun updateAttackedSquare(){
+        for(pos in occupiedSquares.whiteOccupiedSquares){
+            val attSqrs = getAttackedSquares(pos)
+
+            for(sqr in attSqrs){
+                if(sqr !in attackedSquare.byWhiteAttackedSquares){
+                    attackedSquare.byWhiteAttackedSquares.add(sqr)
+                }
+            }
+        }
+        for(pos in occupiedSquares.blackOccupiedSquares){
+            val attSqrs = getAttackedSquares(pos)
+
+            for(sqr in attSqrs){
+                if(sqr !in attackedSquare.byBlackAttackedSquares){
+                    attackedSquare.byBlackAttackedSquares.add(sqr)
+                }
+            }
+        }
     }
 
 }
